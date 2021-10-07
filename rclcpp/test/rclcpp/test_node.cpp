@@ -202,6 +202,19 @@ TEST_F(TestNode, subnode_get_name_and_namespace) {
     }, rclcpp::exceptions::NameValidationError);
   }
 }
+
+TEST_F(TestNode, subnode_params) {
+  {
+    auto node = std::make_shared<rclcpp::Node>("my_node", "ns");
+    auto subnode = node->create_sub_node("sub_ns");
+    ASSERT_NO_THROW(
+    {
+      node->declare_parameter("a", 2.);
+      subnode->declare_parameter("a", 1.);
+    });
+  }
+}
+
 /*
    Testing node construction and destruction.
  */
