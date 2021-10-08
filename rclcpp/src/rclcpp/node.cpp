@@ -166,9 +166,7 @@ Node::Node(
       other.node_options_.parameter_overrides(),
       other.node_options_.start_parameter_services(),
       other.node_options_.start_parameter_event_publisher(),
-      // This is needed in order to apply parameter overrides to the qos profile provided in
-      // options.
-      get_parameter_events_qos(*other.node_base_, other.node_options_),
+      other.node_options_.parameter_event_qos(),
       other.node_options_.parameter_event_publisher_options(),
       other.node_options_.allow_undeclared_parameters(),
       other.node_options_.automatically_declare_parameters_from_overrides()
