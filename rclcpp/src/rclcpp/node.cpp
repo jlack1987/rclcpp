@@ -94,6 +94,25 @@ create_effective_namespace(const std::string & node_namespace, const std::string
   }
 }
 
+RCLCPP_LOCAL
+std::string
+extended_param_name(const std::string & sub_namespace, const std::string & name)
+{
+  // Assumption is that the existing_sub_namespace does not need checking
+  // because it would be checked already when it was set with this function.
+
+  // check if the new name extension is absolute
+  if (name.front() == '/') {
+    throw rclcpp::exceptions::NameValidationError(
+            "sub_namespace",
+            name.c_str(),
+            "a sub-namespace should not have a leading /",
+            0);
+  }
+
+  return sub_namespace + "/" + name;
+}
+
 Node::Node(
   const std::string & node_name,
   const NodeOptions & options)
@@ -319,7 +338,7 @@ Node::declare_parameter(
   bool ignore_override)
 {
   return this->node_parameters_->declare_parameter(
-    name,
+    extended_param_name(sub_namespace_, name),
     default_value,
     parameter_descriptor,
     ignore_override);
@@ -333,7 +352,7 @@ Node::declare_parameter(
   bool ignore_override)
 {
   return this->node_parameters_->declare_parameter(
-    name,
+    extended_param_name(sub_namespace_, name),
     type,
     parameter_descriptor,
     ignore_override);
@@ -342,13 +361,13 @@ Node::declare_parameter(
 void
 Node::undeclare_parameter(const std::string & name)
 {
-  this->node_parameters_->undeclare_parameter(name);
+  this->node_parameters_->undeclare_parameter(extended_param_name(sub_namespace_, name));
 }
 
 bool
 Node::has_parameter(const std::string & name) const
 {
-  return this->node_parameters_->has_parameter(name);
+  return this->node_parameters_->has_parameter(extended_param_name(sub_namespace_, name));
 }
 
 rcl_interfaces::msg::SetParametersResult
@@ -360,25 +379,39 @@ Node::set_parameter(const rclcpp::Parameter & parameter)
 std::vector<rcl_interfaces::msg::SetParametersResult>
 Node::set_parameters(const std::vector<rclcpp::Parameter> & parameters)
 {
-  return node_parameters_->set_parameters(parameters);
+  // gotta iterate through here, copy them over, and prepend the users param name with the sub namespace()
+  std::vector<rclcpp::Parameter> p_cp;
+  for(auto const& param : parameters)
+  {
+    p_cp.push_back(rclcpp::Parameter(extended_param_name(sub_namespace_, param.get_name()), param.get_parameter_value()));
+  }
+  return node_parameters_->set_parameters(p_cp);
 }
 
 rcl_interfaces::msg::SetParametersResult
 Node::set_parameters_atomically(const std::vector<rclcpp::Parameter> & parameters)
 {
-  return node_parameters_->set_parameters_atomically(parameters);
+  // gotta iterate through here, copy them over, and prepend the users param name with the sub namespace()
+  std::vector<rclcpp::Parameter> p_cp;
+  for(auto const& param : parameters)
+  {
+    std::cout << extended_param_name(sub_namespace_, param.get_name()) << std::endl;
+    p_cp.push_back(rclcpp::Parameter(extended_param_name(sub_namespace_, param.get_name()), param.get_parameter_value()));
+  }
+  return node_parameters_->set_parameters_atomically(p_cp);
 }
 
 rclcpp::Parameter
 Node::get_parameter(const std::string & name) const
 {
-  return node_parameters_->get_parameter(name);
+  std::cout << extended_param_name(sub_namespace_, name) << std::endl;
+  return node_parameters_->get_parameter(extended_param_name(sub_namespace_, name));
 }
 
 bool
 Node::get_parameter(const std::string & name, rclcpp::Parameter & parameter) const
 {
-  return node_parameters_->get_parameter(name, parameter);
+  return node_parameters_->get_parameter(extended_param_name(sub_namespace_, name), parameter);
 }
 
 std::vector<rclcpp::Parameter>
