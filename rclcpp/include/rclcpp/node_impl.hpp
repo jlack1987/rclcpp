@@ -199,10 +199,9 @@ Node::declare_parameter(
   const rcl_interfaces::msg::ParameterDescriptor & parameter_descriptor,
   bool ignore_override)
 {
-  std::cout << "declaring: " << extend_name_with_sub_namespace(name, sub_namespace_) << std::endl;
   try {
     return this->declare_parameter(
-      extend_name_with_sub_namespace(name, sub_namespace_),
+      name,
       rclcpp::ParameterValue(default_value),
       parameter_descriptor,
       ignore_override
@@ -223,7 +222,7 @@ Node::declare_parameter(
   // the correct rclcpp::ParameterType from ParameterT
   rclcpp::ParameterValue value{ParameterT{}};
   return this->declare_parameter(
-    extend_name_with_sub_namespace(name, sub_namespace_),
+    name,
     value.get_type(),
     parameter_descriptor,
     ignore_override

@@ -395,7 +395,6 @@ Node::set_parameters_atomically(const std::vector<rclcpp::Parameter> & parameter
   std::vector<rclcpp::Parameter> p_cp;
   for(auto const& param : parameters)
   {
-    std::cout << extended_param_name(sub_namespace_, param.get_name()) << std::endl;
     p_cp.push_back(rclcpp::Parameter(extended_param_name(sub_namespace_, param.get_name()), param.get_parameter_value()));
   }
   return node_parameters_->set_parameters_atomically(p_cp);
@@ -404,7 +403,6 @@ Node::set_parameters_atomically(const std::vector<rclcpp::Parameter> & parameter
 rclcpp::Parameter
 Node::get_parameter(const std::string & name) const
 {
-  std::cout << extended_param_name(sub_namespace_, name) << std::endl;
   return node_parameters_->get_parameter(extended_param_name(sub_namespace_, name));
 }
 
