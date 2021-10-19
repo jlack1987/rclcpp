@@ -29,9 +29,10 @@ ParameterService::ParameterService(
   const std::shared_ptr<rclcpp::node_interfaces::NodeBaseInterface> node_base,
   const std::shared_ptr<rclcpp::node_interfaces::NodeServicesInterface> node_services,
   rclcpp::node_interfaces::NodeParametersInterface * node_params,
-  const rmw_qos_profile_t & qos_profile)
+  const rmw_qos_profile_t & qos_profile,
+  const std::string & topic_service_prefix)
 {
-  const std::string node_name = node_base->get_name();
+  const std::string node_name = topic_service_prefix.empty() ? node_base->get_name() : node_base->get_name() + std::string("/") + topic_service_prefix;
 
   get_parameters_service_ = create_service<rcl_interfaces::srv::GetParameters>(
     node_base, node_services,

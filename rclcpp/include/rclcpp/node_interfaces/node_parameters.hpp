@@ -97,7 +97,8 @@ public:
     const rclcpp::QoS & parameter_event_qos,
     const rclcpp::PublisherOptionsBase & parameter_event_publisher_options,
     bool allow_undeclared_parameters,
-    bool automatically_declare_parameters_from_overrides);
+    bool automatically_declare_parameters_from_overrides,
+    const std::string & topic_service_prefix = "");
 
   RCLCPP_PUBLIC
   virtual

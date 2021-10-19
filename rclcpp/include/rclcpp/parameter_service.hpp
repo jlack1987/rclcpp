@@ -44,7 +44,8 @@ public:
     const std::shared_ptr<node_interfaces::NodeBaseInterface> node_base,
     const std::shared_ptr<node_interfaces::NodeServicesInterface> node_services,
     rclcpp::node_interfaces::NodeParametersInterface * node_params,
-    const rmw_qos_profile_t & qos_profile = rmw_qos_profile_parameters);
+    const rmw_qos_profile_t & qos_profile = rmw_qos_profile_parameters,
+    const std::string & topic_service_prefix = "");
 
 private:
   rclcpp::Service<rcl_interfaces::srv::GetParameters>::SharedPtr get_parameters_service_;
