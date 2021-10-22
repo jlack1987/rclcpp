@@ -162,6 +162,7 @@ TEST_F(TestNode, get_name_and_namespace) {
 TEST_F(TestNode, subnode_get_name_and_namespace) {
   {
     auto node = std::make_shared<rclcpp::Node>("my_node", "ns");
+    EXPECT_STREQ("/ns", node->get_effective_namespace().c_str());
     auto subnode = node->create_sub_node("sub_ns");
     EXPECT_STREQ("my_node", subnode->get_name());
     EXPECT_STREQ("/ns", subnode->get_namespace());
